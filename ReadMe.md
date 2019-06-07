@@ -17,3 +17,12 @@ When we need to send/receive data to/from a process running on another computer,
 
 Endpoint: Combination of IP_Address and Port is called an Endpoint. 192.168.1.169:5 is an endpoint and 5 is the port number, rest being the IP Address (excluding :).
 When a process running on a computer A in a network needs to access another process running on computer B on the same network, it needs to access it using Endpoint B.
+
+# Client Server Model
+Client and Server are two processes that can be running on the same box/virtual-machine or on two different machines connected by a network. Two separate threads in the same process can also use sockets to share data.
+
+### Steps involed in Client Server model functioning:
+1. Server must start first
+2. Server must perform an "Accept Connections" operations.
+	- To perform the operation, the server will use a specific IP address and a port number like 192.169.5.2:20000 (also called Endpoint)
+3. After the server process has started and is accepting connections, a client process will start and will try to connect to the server.
