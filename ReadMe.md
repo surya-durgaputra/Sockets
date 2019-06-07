@@ -26,3 +26,19 @@ Client and Server are two processes that can be running on the same box/virtual-
 2. Server must perform an "Accept Connections" operations.
 	- To perform the operation, the server will use a specific IP address and a port number like 192.169.5.2:20000 (also called Endpoint)
 3. After the server process has started and is accepting connections, a client process will start and will try to connect to the server.
+	- In order for the client to connect to the server, the client will need to know the IP address and the port number (server endpoint) on which the server is listening for incoming connections or accepting incoming connections.
+	- If the connection attempt is successful, the client and the server will be able to communicate (read and write any amount of data to and fro) for any amount of time until either one of the participants decides to close the connection or the network connection goes offline.
+	- If the connection attempt is unsuccessful:
+		* an exception will occur in the client process.
+		* the connection attempts can fail for various reasons:
+			- Windows firewall has blocked either the client process or the server process
+			- The IP address supplied to the client is incorrect.
+			- The port number supplied to the client process as server port number is wrong.
+			- The port number supplied to the server process as port number to start accepting connections is already occupied by another process.
+			- The server process was not started at all.
+			- The server process was started but crashed.
+	- After client-server connection has been established, **if one end goes offline, the other end will receive an exception.**
+	- **Remember that TCP/IP is a stream based protocol. Content that are sent through many SendData operations might get read with only one ReadData operation. And it could be jumbled data.**
+		- Typically, "\n" is used as a message delimiter to handle this problem in production systems.
+4. You can enable Telnet client and Telnet server on your windows machine via the control panel.
+	- You can run telnet client by opening the command prompt and typing telnet. You will get a prompt "Microsoft Telnet". This means that telnet client is running successfully on your computer. To close telnet client, just click the close button on the prompt window.
