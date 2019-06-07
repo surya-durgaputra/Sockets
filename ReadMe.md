@@ -42,3 +42,4 @@ Client and Server are two processes that can be running on the same box/virtual-
 		- Typically, "\n" is used as a message delimiter to handle this problem in production systems.
 4. You can enable Telnet client and Telnet server on your windows machine via the control panel.
 	- You can run telnet client by opening the command prompt and typing telnet. You will get a prompt "Microsoft Telnet". This means that telnet client is running successfully on your computer. To close telnet client, just click the close button on the prompt window.
+	- Telnet utility is useful as it can be used as the other side. For example if we have are coding a server, we can test its working by having telnet-client turned on. This way we will not also have to implement a client to just test the server. 
