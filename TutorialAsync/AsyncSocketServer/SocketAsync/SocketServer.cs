@@ -23,6 +23,35 @@ namespace SocketAsync
         // methods provided by this class
         TcpListener mTcpListener;
 
+        public void StopServer()
+        {
+            try
+            {
+                if (mTcpListener != null)
+                {
+                    // note: calling Stop() will have side effects.
+                    // we will get an exception in the AcceptTcpClientAsync() method of mTcpListener
+                    // (inside StartListeningForIncomingConnection method)
+                    // that exception will get handled by the catch block
+                    // and we will see its trace on the Debug log
+                    mTcpListener.Stop();
+                }
+                foreach(TcpClient c in mClients)
+                {
+                    // when Close() is called, there will be side effects
+                    // an exception will occur in each of the connected client
+                    // this will occur in TakeCareOfTcpClient() method
+                    // the catch block will first call RemoveClient() method
+                    // and then show the trace on the Debug log
+                    c.Close();
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e.ToString());
+            }
+        }
+
         // we will create a list of TCP Clients that are connected to the server
         // when a client connects, we add it to this list
         // when a client disconnects, we remove it from this list
@@ -54,31 +83,39 @@ namespace SocketAsync
             System.Diagnostics.Debug.WriteLine(string.Format("IP Address: {0} - Port: {1}", mIP.ToString(), mPort));
 
             mTcpListener = new TcpListener(mIP, mPort);
-            mTcpListener.Start();
-
-            // following is to continuously accept client connections
-            KeepRunning = true;
-            while (KeepRunning)
+            try
             {
-                
-                // in order to accept incoming connections, we need to call another method AcceptTcpClientAsync
-                // this method returns a TcpClient object. TcpClient is yet another helper class that allows us to 
-                // handle client sockets in an easy fashion
-                var returnedByAccept = await mTcpListener.AcceptTcpClientAsync();
+                mTcpListener.Start();
 
-                // add the new client to our list
-                mClients.Add(returnedByAccept);
+                // following is to continuously accept client connections
+                KeepRunning = true;
+                while (KeepRunning)
+                {
 
-                Debug.WriteLine("Client connected successfully, count: {0} - {1}", mClients.Count, returnedByAccept.Client.RemoteEndPoint);
+                    // in order to accept incoming connections, we need to call another method AcceptTcpClientAsync
+                    // this method returns a TcpClient object. TcpClient is yet another helper class that allows us to 
+                    // handle client sockets in an easy fashion
+                    var returnedByAccept = await mTcpListener.AcceptTcpClientAsync();
 
-                TakeCareOfTcpClient(returnedByAccept);
+                    // add the new client to our list
+                    mClients.Add(returnedByAccept);
+
+                    Debug.WriteLine("Client connected successfully, count: {0} - {1}", mClients.Count, returnedByAccept.Client.RemoteEndPoint);
+
+                    TakeCareOfTcpClient(returnedByAccept);
+                }
             }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e.ToString());
+            }
+            
         }
 
         // in this method we will perform the asyc read operation
         private async void TakeCareOfTcpClient(TcpClient paramClient)
         {
-            // Every TCP-IP stream socket has got an IO Stream attached to it, just like the stream available in case of console-IO or File-IO.
+            // Every TCP-IP socket or TcpClient has got a network Stream attached to it, just like the stream available in case of console-IO or File-IO.
             // we use the streamreader object to read data from the network stream which is associated with the TCP Client that is passed into
             // this method as a parameter.
             NetworkStream stream = null;

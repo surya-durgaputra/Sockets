@@ -31,13 +31,14 @@
             this.btnAcceptIncomingAsync = new System.Windows.Forms.Button();
             this.btnSendAll = new System.Windows.Forms.Button();
             this.txtMessage = new System.Windows.Forms.TextBox();
+            this.btnStopServer = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // btnAcceptIncomingAsync
             // 
-            this.btnAcceptIncomingAsync.Location = new System.Drawing.Point(12, 406);
+            this.btnAcceptIncomingAsync.Location = new System.Drawing.Point(27, 406);
             this.btnAcceptIncomingAsync.Name = "btnAcceptIncomingAsync";
-            this.btnAcceptIncomingAsync.Size = new System.Drawing.Size(368, 23);
+            this.btnAcceptIncomingAsync.Size = new System.Drawing.Size(194, 23);
             this.btnAcceptIncomingAsync.TabIndex = 0;
             this.btnAcceptIncomingAsync.Text = "Accept Incoming Connection";
             this.btnAcceptIncomingAsync.UseVisualStyleBackColor = true;
@@ -61,16 +62,28 @@
             this.txtMessage.TabIndex = 2;
             this.txtMessage.Text = "Message";
             // 
+            // btnStopServer
+            // 
+            this.btnStopServer.Location = new System.Drawing.Point(227, 406);
+            this.btnStopServer.Name = "btnStopServer";
+            this.btnStopServer.Size = new System.Drawing.Size(137, 23);
+            this.btnStopServer.TabIndex = 3;
+            this.btnStopServer.Text = "Stop Server";
+            this.btnStopServer.UseVisualStyleBackColor = true;
+            this.btnStopServer.Click += new System.EventHandler(this.btnStopServer_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.btnStopServer);
             this.Controls.Add(this.txtMessage);
             this.Controls.Add(this.btnSendAll);
             this.Controls.Add(this.btnAcceptIncomingAsync);
             this.Name = "Form1";
             this.Text = "Form1";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -81,6 +94,7 @@
         private System.Windows.Forms.Button btnAcceptIncomingAsync;
         private System.Windows.Forms.Button btnSendAll;
         private System.Windows.Forms.TextBox txtMessage;
+        private System.Windows.Forms.Button btnStopServer;
     }
 }
 
