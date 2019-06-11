@@ -43,3 +43,13 @@ Client and Server are two processes that can be running on the same box/virtual-
 4. You can enable Telnet client and Telnet server on your windows machine via the control panel.
 	- You can run telnet client by opening the command prompt and typing telnet. You will get a prompt "Microsoft Telnet". This means that telnet client is running successfully on your computer. To close telnet client, just click the close button on the prompt window.
 	- Telnet utility is useful as it can be used as the other side. For example if we have are coding a server, we can test its working by having telnet-client turned on. This way we will not also have to implement a client to just test the server. 
+	
+_______________________________________________________________________________________________________________________________________________________________________________________
+
+# Client and Server side Socket Programming
+- Client side socket program is very similar to the server side except that client side sockets dont call the bind, listen and accept method calls. Instead the client side programs call the connect method on the socket. The socket object is the same. It is just the difference of method calls.
+- Client side processes need to know the exact server process endpoint. 
+- **Stopping the Server**
+	* Prevent TcpListener from accepting new connections
+	* Disconnect the client sockets (TcpClient)
+	* Write StopServer method

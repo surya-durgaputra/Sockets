@@ -150,7 +150,8 @@ namespace SocketAsync
                 foreach (TcpClient c in mClients)
                 {
                     // since we dont need WriteAsync call to be awaited, no need to add await
-                    c.GetStream().WriteAsync(buffMessage,0,buffMessage.Length);
+                    await c.GetStream().WriteAsync(buffMessage,0,buffMessage.Length);
+
                 }
             }
             catch (Exception e)

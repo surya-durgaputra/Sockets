@@ -7,17 +7,18 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using SocketAsync;
+using LahoreSocketAsync;
 
-namespace AsyncSocketServer
+namespace UdemyAsyncSocketServer
 {
     public partial class Form1 : Form
     {
-        SocketServer mServer;
+        LahoreSocketServer mServer;
+
         public Form1()
         {
             InitializeComponent();
-            mServer = new SocketServer();
+            mServer = new LahoreSocketServer();
         }
 
         private void btnAcceptIncomingAsync_Click(object sender, EventArgs e)
@@ -28,6 +29,16 @@ namespace AsyncSocketServer
         private void btnSendAll_Click(object sender, EventArgs e)
         {
             mServer.SendToAll(txtMessage.Text.Trim());
+        }
+
+        private void btnStopServer_Click(object sender, EventArgs e)
+        {
+            mServer.StopServer();
+        }
+
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            mServer.StopServer();
         }
     }
 }
