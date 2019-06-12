@@ -12,6 +12,43 @@ namespace SocketAsync
 {
     public class SocketServer
     {
+        //Event and its handler
+        //EventHandler is a delegate provided by the .NET framework to simplify the creation of custom events. 
+        //By using EventHandler you remove the requirement to create your own delegate to support your new event. 
+        //The EventHandler delegate defines two parameters (object sender, EventArgs e), which match the standard event pattern.
+        // http://www.blackwasp.co.uk/EventHandlerT.aspx
+        //Using generic version of the EventHandler delegate EventHandler<T>
+        // the following line says that the event ClientConnectedEvent can call any method that is pointed to by
+        // EventHandler<ClientConnectedEventArgs> delegate
+        // EventHandler<ClientConnectedEventArgs> excatly determines what method call signature will look like
+        // (object sender, ClientConnectedEventArgs e) and the return type of these methods will be void
+        public EventHandler<ClientConnectedEventArgs> ClientConnectedEvent;
+        // now we declare the method to raise the above event
+        // of course we will need to prepare and pass it the event arguments that will be sent to all its subscribers
+        // we have declared it as protected virtual so that any derived classes can override the event invocation behavior
+        protected virtual void RaiseClientConnectedEvent(ClientConnectedEventArgs e)
+        {
+            // within this method we are creating a temporary copy of the EventHandler object to avoid any race conditions
+            EventHandler<ClientConnectedEventArgs> custom_event = ClientConnectedEvent;
+            if(custom_event != null)
+            {
+                // here Object sender will point to custom_event which is an instance of ClientConnectedEvent event
+                custom_event(this, e);
+            }
+        }
+        // ServerTextReceivedEvent implementation
+        public EventHandler<TextReceivedEventArgs> ServerTextReceivedEvent;
+        protected virtual void RaiseServerTextReceivedEvent(TextReceivedEventArgs e)
+        {
+            // within this method we are creating a temporary copy of the EventHandler object to avoid any race conditions
+            EventHandler<TextReceivedEventArgs> custom_event = ServerTextReceivedEvent;
+            if (custom_event != null)
+            {
+                // here Object sender will point to custom_event which is an instance of ClientConnectedEvent event
+                custom_event(this, e);
+            }
+        }
+
         // since we know that we need to supply an IPAddress and port number
         IPAddress mIP;
         int mPort;
@@ -23,39 +60,13 @@ namespace SocketAsync
         // methods provided by this class
         TcpListener mTcpListener;
 
-        public void StopServer()
-        {
-            try
-            {
-                if (mTcpListener != null)
-                {
-                    // note: calling Stop() will have side effects.
-                    // we will get an exception in the AcceptTcpClientAsync() method of mTcpListener
-                    // (inside StartListeningForIncomingConnection method)
-                    // that exception will get handled by the catch block
-                    // and we will see its trace on the Debug log
-                    mTcpListener.Stop();
-                }
-                foreach(TcpClient c in mClients)
-                {
-                    // when Close() is called, there will be side effects
-                    // an exception will occur in each of the connected client
-                    // this will occur in TakeCareOfTcpClient() method
-                    // the catch block will first call RemoveClient() method
-                    // and then show the trace on the Debug log
-                    c.Close();
-                }
-            }
-            catch (Exception e)
-            {
-                Debug.WriteLine(e.ToString());
-            }
-        }
-
         // we will create a list of TCP Clients that are connected to the server
         // when a client connects, we add it to this list
         // when a client disconnects, we remove it from this list
         List<TcpClient> mClients;
+
+
+        
 
         public SocketServer()
         {
@@ -103,6 +114,12 @@ namespace SocketAsync
                     Debug.WriteLine("Client connected successfully, count: {0} - {1}", mClients.Count, returnedByAccept.Client.RemoteEndPoint);
 
                     TakeCareOfTcpClient(returnedByAccept);
+
+                    // now we will raise the event that a new client has connected
+                    // prepare the event args
+                    ClientConnectedEventArgs eaClientConnected = new ClientConnectedEventArgs(returnedByAccept.Client.RemoteEndPoint.ToString());
+                    // now we raise the event
+                    RaiseClientConnectedEvent(eaClientConnected);
                 }
             }
             catch (Exception e)
@@ -154,6 +171,13 @@ namespace SocketAsync
                     // before we start the next read operation, we also need to clear the byte array buffer which we used for 
                     // receiving data.
                     Array.Clear(buff, 0, buff.Length);
+
+                    // we now raise the ServerTextReceivedEvent event
+                    // to raise the event, we first prepare the event args
+                    RaiseServerTextReceivedEvent(new TextReceivedEventArgs(
+                        receivedText,
+                        paramClient.Client.RemoteEndPoint.ToString()
+                        ));
                 }
             }
             catch (Exception e)
@@ -189,6 +213,35 @@ namespace SocketAsync
                     // since we dont need WriteAsync call to be awaited, no need to add await
                     await c.GetStream().WriteAsync(buffMessage,0,buffMessage.Length);
 
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e.ToString());
+            }
+        }
+
+        public void StopServer()
+        {
+            try
+            {
+                if (mTcpListener != null)
+                {
+                    // note: calling Stop() will have side effects.
+                    // we will get an exception in the AcceptTcpClientAsync() method of mTcpListener
+                    // (inside StartListeningForIncomingConnection method)
+                    // that exception will get handled by the catch block
+                    // and we will see its trace on the Debug log
+                    mTcpListener.Stop();
+                }
+                foreach (TcpClient c in mClients)
+                {
+                    // when Close() is called, there will be side effects
+                    // an exception will occur in each of the connected client
+                    // this will occur in TakeCareOfTcpClient() method
+                    // the catch block will first call RemoveClient() method
+                    // and then show the trace on the Debug log
+                    c.Close();
                 }
             }
             catch (Exception e)

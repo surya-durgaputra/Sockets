@@ -53,3 +53,15 @@ ________________________________________________________________________________
 	* Prevent TcpListener from accepting new connections
 	* Disconnect the client sockets (TcpClient)
 	* Write StopServer method
+_______________________________________________________________________________________________________________________________________________________________________________________
+
+# Events: Publisher-Subscriber model
+- Server/Client Events:
+	* Server Client Connected
+	* Server Text Received
+	* Client Text Received
+	* Client Disconnected (in server)
+	* Server Disconnected (in client)
+	* Publisher Subscriber Model: 
+		+ This approach of raising and handling events is known as **Publisher-Subscriber** model. Our socket library (SocketAsync consisting of SocketClient and SocketServer) will act as event publisher. The applications using this library will act as subscribers.
+		+ When the Events are raised, they will trigger some code in the Subscriber class and that code will do the business logic with the info attached with the Event.

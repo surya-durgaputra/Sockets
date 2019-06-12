@@ -23,6 +23,19 @@ namespace SocketAsync
             mServerIPAddress = null;
         }
 
+        // ClientTextReceivedEvent implementation
+        public EventHandler<TextReceivedEventArgs> ClientTextReceivedEvent;
+        protected virtual void RaiseClientTextReceivedEvent(TextReceivedEventArgs e)
+        {
+            // within this method we are creating a temporary copy of the EventHandler object to avoid any race conditions
+            EventHandler<TextReceivedEventArgs> custom_event = ClientTextReceivedEvent;
+            if (custom_event != null)
+            {
+                // here Object sender will point to custom_event which is an instance of ClientConnectedEvent event
+                custom_event(this, e);
+            }
+        }
+
         //getter and setter for instance variables
         public int ServerPort
         {
@@ -140,9 +153,17 @@ namespace SocketAsync
                         mClient.Close();
                         break;
                     }
-                    Console.WriteLine(string.Format("Received bytes: {0} - Message: {1}", readByteCount, new string(buff)));
+
+                    string receivedText = new string(buff);
+                    Console.WriteLine(string.Format("Received bytes: {0} - Message: {1}", readByteCount, receivedText));
                     //lets clear the array buffer before reading again
                     Array.Clear(buff, 0, buff.Length);
+
+                    //raise the text received event
+                    RaiseClientTextReceivedEvent(new TextReceivedEventArgs(
+                        receivedText,
+                        mClient.Client.RemoteEndPoint.ToString()
+                        ));
                 }
             }
             catch (Exception e)
