@@ -76,15 +76,15 @@ ________________________________________________________________________________
 		
 _______________________________________________________________________________________________________________________________________________________________________________________
 # Role of DHCP and DNS
-	* **DHCP**
+	- **DHCP**
 		- Dynamic Host Control Protocol
 		- Usually built into every home router
 		- Its job is to assign IP addresses to hosts dynamically
-	* **DNS - Domain Name Server**
+	- **DNS - Domain Name Server**
 		- Once the DHCP server assign the IP addresses to the hosts, the job of DNS starts
 		- DNS keeps track of IP Addresses of all hosts on the network
 		- DNS can be used to look up the IP Address of any host on the network using the hostname
 		- DNS is built into every home router
 		- .NET class System.Net.Dns
-		- ** In a production system, we should assume that hosts will be assigned IP dynamically by the DHCP and hence always use the hostname and then map the hostname to the IP address using methods exposed by the System.Net.Dns class **
+		- **In a production system, we should assume that hosts will be assigned IP dynamically by the DHCP and hence always use the hostname and then map the hostname to the IP address using methods exposed by the System.Net.Dns class**
 		- 
