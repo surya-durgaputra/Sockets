@@ -36,6 +36,37 @@ namespace SocketAsync
             }
         }
 
+        //hostname to IP address mapping using System.Net.Dns
+        public static IPAddress ResolveHostNameToIPAddress(string strHostName)
+        {
+            // since we will be using GetHostAddresses that returns an array of all IP addresses available on the specified
+            // this means that all IPv4 and IPv6 addresses will be there.
+            // We will go with the first available IPv4 address because our server accepts requests on any IP address available on the host.
+            IPAddress[] retAddr = null;
+
+            // if there is not IP address mapped to the supplied hostname, an exception will occer. Lets handle it
+            try
+            {
+                retAddr = Dns.GetHostAddresses(strHostName);
+
+                // now lets iterate through the array of returned IP addresses to get the first available IPv4 address
+                foreach(IPAddress addr in retAddr)
+                {
+                    if(addr.AddressFamily == AddressFamily.InterNetwork)
+                    {
+                        return addr;
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+            // when the hostname has no IP address mapped to it, we will return null
+            // we will use empty string in our console application when null is returned
+            return null;
+        }
+
         //getter and setter for instance variables
         public int ServerPort
         {

@@ -65,3 +65,26 @@ ________________________________________________________________________________
 	* Publisher Subscriber Model: 
 		+ This approach of raising and handling events is known as **Publisher-Subscriber** model. Our socket library (SocketAsync consisting of SocketClient and SocketServer) will act as event publisher. The applications using this library will act as subscribers.
 		+ When the Events are raised, they will trigger some code in the Subscriber class and that code will do the business logic with the info attached with the Event.
+- steps:
+	+ Publisher Side:
+		1. Create the custom EventArgs class to define any custom eventArgs that are passed with the event invocation
+		2. Declare the delegate in the library that is going to raise the event (public EventHandler<ClientConnectedEventArgs> ClientConnectedEvent;)
+		3. Usually in the same class as of point 2, add the code to raise the event (you will need to create the event args before raising the event)
+	+ Subscriber Side:
+		1. Implement the method to be called when the event is raised
+		2. hook the method in 1 to the Event exposed by the instance of class where Publisher was implemented(client.ClientTextReceivedEvent += HandleClientTextReceived;) 
+		
+_______________________________________________________________________________________________________________________________________________________________________________________
+# Role of DHCP and DNS
+	* **DHCP**
+		- Dynamic Host Control Protocol
+		- Usually built into every home router
+		- Its job is to assign IP addresses to hosts dynamically
+	* **DNS - Domain Name Server**
+		- Once the DHCP server assign the IP addresses to the hosts, the job of DNS starts
+		- DNS keeps track of IP Addresses of all hosts on the network
+		- DNS can be used to look up the IP Address of any host on the network using the hostname
+		- DNS is built into every home router
+		- .NET class System.Net.Dns
+		- ** In a production system, we should assume that hosts will be assigned IP dynamically by the DHCP and hence always use the hostname and then map the hostname to the IP address using methods exposed by the System.Net.Dns class **
+		- 

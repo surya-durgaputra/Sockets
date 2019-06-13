@@ -12,6 +12,7 @@ namespace AsyncSocketClient
         static void Main(string[] args)
         {
             SocketClient client = new SocketClient();
+            client.ClientTextReceivedEvent += HandleClientTextReceived;
             Console.WriteLine("*** Welcome to SOcket Client Starter Example ***");
             Console.WriteLine("Please type a Valid Server IP Address and Press Enter: ");
 
@@ -19,6 +20,20 @@ namespace AsyncSocketClient
 
             Console.WriteLine("Please supply a valid Port Number 0 - 65535 and Press Enter: ");
             string strPortInput = Console.ReadLine();
+
+            // hostname to IP address mapping using System.Net.Dns
+            if (strIPAddress.StartsWith("<HOST>"))
+            {
+                strIPAddress = strIPAddress.Replace("<HOST>", string.Empty);
+                strIPAddress = Convert.ToString(SocketClient.ResolveHostNameToIPAddress(strIPAddress));
+            }
+            // we will use empty string in our console application when null is returned
+            if (string.IsNullOrEmpty(strIPAddress))
+            {
+                Console.WriteLine("No IP address supplied. Press any key to exit...");
+                Console.ReadKey();
+                Environment.Exit(0);
+            }
 
             if(!client.SetServerIPAddress(strIPAddress) || !client.SetPortNumber(strPortInput))
             {
@@ -50,6 +65,16 @@ namespace AsyncSocketClient
                 }
                 
             } while (strInputUser != "<EXIT>");
+
+        }
+        private static void HandleClientTextReceived(object sender, TextReceivedEventArgs e)
+        {
+            Console.WriteLine(string.Format(
+                "{0} - Received: {1}{2}",
+                DateTime.Now,
+                e.Text,
+                Environment.NewLine
+                ));
         }
     }
 }
